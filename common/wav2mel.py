@@ -4,6 +4,8 @@ from scipy.signal import get_window
 from librosa.filters import mel
 import librosa
 
+from wav2f0 import *
+
 def butter_highpass(cutoff, sr=24000, order=5):
     nyq = 0.5 * sr
     normal_cutoff = cutoff / nyq
@@ -48,4 +50,11 @@ if __name__ == "__main__":
     D = pySTFT(x).T
     D_mel = np.dot(D, mel_bias_t)
     S = normalize(amp_to_db(D_mel))
-    print(S)
+
+    f0_norm = speaker_f0(x, sample_rate)
+    f0_norm = np.clip(f0_norm, 0, 1)
+
+    assert len(f0_norm) == len(S)
+
+    print(S.shape)
+    print(f0_norm.shape)
